@@ -21,13 +21,18 @@ Route::get('/clear-cache', function() {
 
 // Route alternatif pengganti symlink()
 Route::get('/storage/{path}', function ($path) {
-    $filePath = storage_path('app/public/' . $path);
+    $basePath = storage_path('app/public');
+    $filePath = $basePath . '/' . $path;
     
-    if (!file_exists($filePath)) {
+    // Validate path to prevent path traversal vulnerabilities
+    $realBase = realpath($basePath);
+    $realFile = realpath($filePath);
+    
+    if ($realFile === false || strpos($realFile, $realBase) !== 0 || !is_file($realFile)) {
         abort(404);
     }
     
-    return response()->file($filePath);
+    return response()->file($realFile);
 })->where('path', '.*');
 
 // Public Absensi Nakes
