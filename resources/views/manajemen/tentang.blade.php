@@ -2,14 +2,16 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Tentang KKPO</h1>
             <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola informasi profil, visi, dan misi Klinik Kesehatan Pelaku Olahraga.</p>
         </div>
-        <button class="btn btn-primary px-4 py-2" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fas fa-plus me-2"></i>TAMBAH DATA
-        </button>
+        <div class="d-grid d-md-flex justify-content-md-end">
+            <button class="btn btn-primary px-4 py-2 text-nowrap" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus me-2"></i>TAMBAH DATA
+            </button>
+        </div>
     </div>
 
     <div class="card">

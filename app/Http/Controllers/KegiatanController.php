@@ -7,19 +7,30 @@ use App\Kegiatan;
 
 class KegiatanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = Kegiatan::all();
-        return view('manajemen.kegiatan', compact('data'));
+        $search = $request->query('search');
+        $data = Kegiatan::with('jadwalPertandingans')->when($search, function ($query, $search) {
+                        return $query->where('nama_kegiatan', 'like', "%{$search}%");
+                    })
+                    ->latest()
+                    ->paginate(5);
+                    
+        $kelompokCabors = \App\KelompokCabor::orderBy('nama')->get();
+        $cabors = \App\Cabor::orderBy('nama')->get();
+
+        return view('manajemen.kegiatan', compact('data', 'search', 'kelompokCabors', 'cabors'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
-            'tanggal' => 'required|date',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'is_khusus' => 'required|boolean',
         ]);
         Kegiatan::create($validated);
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan');
@@ -30,9 +41,11 @@ class KegiatanController extends Controller
         $kegiatan = Kegiatan::findOrFail($id);
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
-            'tanggal' => 'required|date',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'is_khusus' => 'required|boolean',
         ]);
         $kegiatan->update($validated);
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diubah');

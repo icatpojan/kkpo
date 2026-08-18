@@ -122,8 +122,8 @@
                     <i class="fas fa-user-injured"></i>
                 </div>
                 <div class="kpi-info">
-                    <h3>Cedera Aktif</h3>
-                    <h2>{{ number_format($cederaAktif) }}</h2>
+                    <h3>Total Cedera</h3>
+                    <h2>{{ number_format($incidentCount) }}</h2>
                 </div>
             </div>
         </div>
@@ -133,8 +133,8 @@
                     <i class="fas fa-heartbeat"></i>
                 </div>
                 <div class="kpi-info">
-                    <h3>Sembuh Rate</h3>
-                    <h2>{{ $sembuhRate }}%</h2>
+                    <h3>Sembuh</h3>
+                    <h2>{{ number_format($totalSembuh) }}</h2>
                 </div>
             </div>
         </div>

@@ -2,14 +2,23 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Berita & Pengumuman</h1>
             <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola publikasi berita, informasi terbaru, dan pengumuman untuk masyarakat.</p>
         </div>
-        <button class="btn btn-primary px-4 py-2" data-bs-toggle="modal" data-bs-target="#createModal" style="border-radius: 6px;">
-            <i class="fas fa-plus me-2"></i>Tambah Berita
-        </button>
+        <div class="d-grid d-md-flex justify-content-md-end">
+            <button class="btn btn-primary px-4 py-2 text-nowrap" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus me-2"></i>TULIS BERITA
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <form action="{{ route('berita.index') }}" method="GET" class="d-flex gap-2" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Cari judul berita..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
     </div>
 
     <div class="card">
@@ -24,7 +33,8 @@
                         <tr>
                             <th style="width: 50px;">NO</th>
                             <th style="width: 25%;">JUDUL BERITA</th>
-                            <th style="width: 20%;">TANGGAL PUBLIKASI</th>
+                            <th style="width: 15%;">TANGGAL PUBLIKASI</th>
+                            <th style="width: 10%;">GAMBAR</th>
                             <th>KONTEN</th>
                             <th class="text-end" style="width: 120px;">AKSI</th>
                         </tr>
@@ -35,7 +45,16 @@
                             <td>{{ $loop->iteration }}</td>
                             <td><strong>{{ $item->judul }}</strong></td>
                             <td>{{ $item->tanggal_publikasi ? \Carbon\Carbon::parse($item->tanggal_publikasi)->format('d F Y') : '-' }}</td>
-                            <td>{{ Str::limit($item->konten, 100) }}</td>
+                            <td>
+                                @if($item->gambar)
+                                    <img src="{{ asset($item->gambar) }}" alt="{{ $item->judul }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                @else
+                                    <div class="d-flex align-items-center justify-content-center bg-light text-secondary" style="width: 50px; height: 50px; border-radius: 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                @endif
+                            </td>
+                            <td>{{ Str::limit(strip_tags($item->konten), 100) }}</td>
                             <td>
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-sm btn-outline-primary action-btn" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
@@ -54,7 +73,7 @@
                         <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content" style="border-radius: 8px; border: none;">
-                                    <form action="{{ route('berita.update', $item->id) }}" method="POST">
+                                    <form action="{{ route('berita.update', $item->id) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-header" style="border-bottom: 1px solid #e2e8f0;">
@@ -71,8 +90,18 @@
                                                 <input type="date" name="tanggal_publikasi" class="form-control" value="{{ $item->tanggal_publikasi }}">
                                             </div>
                                             <div class="mb-3">
+                                                <label class="form-label">Gambar Berita (Opsional)</label>
+                                                <input type="file" name="gambar" class="form-control" accept="image/*">
+                                                @if($item->gambar)
+                                                    <div class="mt-2">
+                                                        <small class="text-muted d-block mb-1">Gambar saat ini:</small>
+                                                        <img src="{{ asset($item->gambar) }}" alt="Current Image" style="max-height: 100px; border-radius: 8px;">
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="mb-3">
                                                 <label class="form-label">Konten Berita</label>
-                                                <textarea name="konten" class="form-control" rows="5" required>{{ $item->konten }}</textarea>
+                                                <textarea name="konten" class="form-control summernote" rows="5" required>{{ $item->konten }}</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer" style="border-top: 1px solid #e2e8f0;">
@@ -93,13 +122,10 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center" style="background:#fff; padding: 15px 24px; border-top: 1px solid #e2e8f0;">
-            <span style="color: #64748b; font-size: 0.85rem;">Showing 1-{{ count($data) }} of {{ count($data) }}</span>
-            @if(count($data) > 10)
-            <div class="d-flex gap-3">
-                <i class="fas fa-chevron-left" style="color: #0f172a; font-size: 0.8rem; cursor: pointer; opacity: 0.5;"></i>
-                <i class="fas fa-chevron-right" style="color: #0f172a; font-size: 0.8rem; cursor: pointer;"></i>
+            <span style="color: #64748b; font-size: 0.85rem;">Menampilkan {{ $data->firstItem() ?? 0 }} - {{ $data->lastItem() ?? 0 }} dari {{ $data->total() }}</span>
+            <div>
+                {{ $data->withQueryString()->links() }}
             </div>
-            @endif
         </div>
     </div>
 </div>
@@ -108,7 +134,7 @@
 <div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('berita.store') }}" method="POST">
+            <form action="{{ route('berita.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">Tambah Berita</h5>
@@ -124,8 +150,12 @@
                         <input type="date" name="tanggal_publikasi" class="form-control">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Gambar Berita (Opsional)</label>
+                        <input type="file" name="gambar" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Konten Berita</label>
-                        <textarea name="konten" class="form-control" rows="5" required></textarea>
+                        <textarea name="konten" class="form-control summernote" rows="5" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -137,3 +167,29 @@
     </div>
 </div>
 @endsection
+
+@stack('styles')
+<!-- include summernote css -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+
+@push('scripts')
+<!-- include summernote js -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.summernote').summernote({
+            height: 250,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+@endpush

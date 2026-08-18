@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - KKPO KONI Tangsel</title>
-    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-remove.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -210,7 +210,7 @@
         <!-- Left Side (Hero Image + Gradient) -->
         <div class="login-left">
             <div class="login-left-content">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="login-logo">
+                <img src="{{ asset('img/logo-remove.png') }}" alt="Logo" class="login-logo">
                 <h1>KKPO KONI</h1>
                 <p>Sistem Informasi Kesehatan & Kesejahteraan Pelaku Olahraga Kota Tangerang Selatan.</p>
             </div>

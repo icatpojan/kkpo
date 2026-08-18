@@ -7,10 +7,15 @@ use App\MasterNakes;
 
 class MasterNakesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $nakes = MasterNakes::all();
-        return view('master_nakes.index', compact('nakes'));
+        $search = $request->query('search');
+        $nakes = MasterNakes::when($search, function ($query, $search) {
+                        return $query->where('nama', 'like', "%{$search}%");
+                    })
+                    ->latest()
+                    ->paginate(5);
+        return view('master_nakes.index', compact('nakes', 'search'));
     }
 
     public function store(Request $request)

@@ -97,7 +97,7 @@ class DashboardController extends Controller
 
         return view('home', compact(
             'tahun', 'cabor', 'listCabor', 'listTahun',
-            'athleteCount', 'incidentCount', 'cederaAktif', 'rujukanCount', 'sembuhRate',
+            'athleteCount', 'incidentCount', 'cederaAktif', 'rujukanCount', 'sembuhRate', 'totalSembuh',
             'trendLabels', 'trendData',
             'bodyPartLabels', 'bodyPartData',
             'caborLabels', 'caborData',

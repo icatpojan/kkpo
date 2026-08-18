@@ -2,14 +2,23 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Data KKPO se-Banten</h1>
-            <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola data dan informasi seluruh jaringan klinik KKPO di wilayah Provinsi Banten.</p>
+            <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Klinik KKPO se-Banten</h1>
+            <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola direktori instansi dan klinik fasilitas kesehatan tingkat daerah.</p>
         </div>
-        <button class="btn btn-primary px-4 py-2" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fas fa-plus me-2"></i>TAMBAH DATA
-        </button>
+        <div class="d-grid d-md-flex justify-content-md-end">
+            <button class="btn btn-primary px-4 py-2 text-nowrap" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus me-2"></i>TAMBAH DATA
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <form action="{{ route('kkpo-sebanten.index') }}" method="GET" class="d-flex gap-2" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Cari wadah / instansi..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
     </div>
 
     <div class="card">
@@ -95,13 +104,10 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center" style="background:#fff; padding: 15px 24px; border-top: 1px solid #e2e8f0;">
-            <span style="color: #64748b; font-size: 0.85rem;">Showing 1-{{ count($data) }} of {{ count($data) }}</span>
-            @if(count($data) > 10)
-            <div class="d-flex gap-3">
-                <i class="fas fa-chevron-left" style="color: #0f172a; font-size: 0.8rem; cursor: pointer; opacity: 0.5;"></i>
-                <i class="fas fa-chevron-right" style="color: #0f172a; font-size: 0.8rem; cursor: pointer;"></i>
+            <span style="color: #64748b; font-size: 0.85rem;">Menampilkan {{ $data->firstItem() ?? 0 }} - {{ $data->lastItem() ?? 0 }} dari {{ $data->total() }}</span>
+            <div>
+                {{ $data->withQueryString()->links() }}
             </div>
-            @endif
         </div>
     </div>
 </div>

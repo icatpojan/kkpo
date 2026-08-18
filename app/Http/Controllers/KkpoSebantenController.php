@@ -7,10 +7,15 @@ use App\KkpoSebanten;
 
 class KkpoSebantenController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = \App\KkpoSebanten::all();
-        return view('kkpo_sebanten.index', compact('data'));
+        $search = $request->query('search');
+        $data = \App\KkpoSebanten::when($search, function ($query, $search) {
+                        return $query->where('wadah', 'like', "%{$search}%");
+                    })
+                    ->latest()
+                    ->paginate(5);
+        return view('kkpo_sebanten.index', compact('data', 'search'));
     }
 
     public function create()

@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KKPO - KONI Tangerang Selatan</title>
-    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-remove.png') }}?v={{ time() }}">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    @stack('styles')
     
     <style>
         :root {
@@ -333,7 +335,7 @@
         .table tbody tr:hover td { background-color: #f1f5f9 !important; }
 
         /* Table Action Buttons */
-        .table td .btn {
+        .table td .btn.action-btn {
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
@@ -343,8 +345,11 @@
             transition: all 0.2s;
             margin: 0 !important;
         }
-        .table td .btn i { color: #0369a1 !important; } /* Default to dark blue eye icon */
-        .table td .btn-outline-danger i { color: #ef4444 !important; } /* Red for delete */
+        .table td .btn.action-btn i { color: #64748b !important; } /* Default gray icon */
+        .table td .btn-outline-primary.action-btn i { color: #3b82f6 !important; } /* Blue */
+        .table td .btn-outline-info.action-btn i { color: #0ea5e9 !important; } /* Light Blue */
+        .table td .btn-outline-success.action-btn i { color: #22c55e !important; } /* Green */
+        .table td .btn-outline-danger.action-btn i { color: #ef4444 !important; } /* Red */
 
         /* Form Styles */
         .form-control, .form-select {
@@ -506,6 +511,33 @@
             opacity: 0;
             visibility: hidden;
         }
+        /* Pagination Styling */
+        .pagination {
+            gap: 5px;
+            margin-bottom: 0;
+        }
+        .pagination .page-item .page-link {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: #475569;
+            font-weight: 500;
+            background-color: transparent;
+            transition: all 0.2s ease;
+        }
+        .pagination .page-item:not(.active) .page-link:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #0d6efd;
+            color: #fff;
+            box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.2);
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #94a3b8;
+            background-color: transparent;
+        }
     </style>
 </head>
 <body>
@@ -532,7 +564,7 @@
             </button>
         </div>
         <div class="sidebar-scrollable">
-            <div class="brand d-md-flex pt-3 pt-md-4" style="padding-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <a href="{{ url('/') }}" class="brand d-md-flex pt-3 pt-md-4" style="padding-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 15px; text-decoration: none;">
                 <div style="background: white; padding: 6px; border-radius: 12px; display: flex; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                     <img src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 32px; height: 32px; border-radius: 6px; object-fit: contain;">
                 </div>
@@ -540,28 +572,42 @@
                     <span style="font-weight: 900; font-size: 1.5rem; letter-spacing: 1px; color: #ffffff;">KKPO</span>
                     <span style="font-weight: 700; font-size: 0.7rem; letter-spacing: 2px; color: #cbd5e1; text-transform: uppercase;">Tangsel</span>
                 </div>
-            </div>
+            </a>
             <a class="mt-4" href="{{ route('home') }}" style="text-decoration:none; color: #ffffff; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 15px 25px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); display: flex; align-items: center; transition: 0.2s; {{ request()->routeIs('home') ? 'background: rgba(0,0,0,0.08);' : '' }}" onmouseover="this.style.background='rgba(0,0,0,0.08)'" onmouseout="this.style.background='{{ request()->routeIs('home') ? 'rgba(0,0,0,0.08)' : 'transparent' }}'">
                 <i class="fas fa-home" style="width: 24px; font-size: 1.1rem; margin-right: 12px;"></i> Dashboard
             </a>
             <div class="accordion accordion-flush" id="sidebarAccordion">
-                <!-- Manajemen -->
-                @php $isManajemen = request()->routeIs('hero.*', 'tentang.*', 'struktur.*', 'kegiatan.*', 'jadwal-pertandingan.*', 'kkpo-sebanten.*', 'berita.*'); @endphp
+                <!-- Manajemen Web -->
+                @php $isManajemen = request()->routeIs('hero.*', 'tentang.*', 'struktur.*', 'berita.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingManajemen">
                         <button class="accordion-button {{ $isManajemen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManajemen" aria-expanded="{{ $isManajemen ? 'true' : 'false' }}" aria-controls="collapseManajemen">
-                            <i class="fas fa-folder"></i> Manajemen
+                            <i class="fas fa-folder"></i> Manajemen Web
                         </button>
                     </h2>
                     <div id="collapseManajemen" class="accordion-collapse collapse {{ $isManajemen ? 'show' : '' }}" aria-labelledby="headingManajemen" data-bs-parent="#sidebarAccordion">
                         <div class="accordion-body">
-                            <a href="{{ route('hero.index') }}" class="menu-item {{ request()->routeIs('hero.*') ? 'active' : '' }}">Pengaturan Hero</a>
+                            <a href="{{ route('hero.index') }}" class="menu-item {{ request()->routeIs('hero.*') ? 'active' : '' }}">Pengaturan Web</a>
                             <a href="{{ route('tentang.index') }}" class="menu-item {{ request()->routeIs('tentang.*') ? 'active' : '' }}">Tentang KKPO</a>
                             <a href="{{ route('struktur.index') }}" class="menu-item {{ request()->routeIs('struktur.*') ? 'active' : '' }}">Struktur</a>
-                            <a href="{{ route('kegiatan.index') }}" class="menu-item {{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">Kegiatan</a>
-                            <a href="{{ route('jadwal-pertandingan.index') }}" class="menu-item {{ request()->routeIs('jadwal-pertandingan.*') ? 'active' : '' }}">Jadual Tanding</a>
-                            <a href="{{ route('kkpo-sebanten.index') }}" class="menu-item {{ request()->routeIs('kkpo-sebanten.*') ? 'active' : '' }}">KKPO Se-Banten</a>
                             <a href="{{ route('berita.index') }}" class="menu-item {{ request()->routeIs('berita.*') ? 'active' : '' }}">Berita</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Master Kegiatan -->
+                @php $isKegiatan = request()->routeIs('kegiatan.*', 'jadwal-pertandingan.*', 'kkpo-sebanten.*'); @endphp
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingKegiatan">
+                        <button class="accordion-button {{ $isKegiatan ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKegiatan" aria-expanded="{{ $isKegiatan ? 'true' : 'false' }}" aria-controls="collapseKegiatan">
+                            <i class="fas fa-calendar-alt"></i> Master Kegiatan
+                        </button>
+                    </h2>
+                    <div id="collapseKegiatan" class="accordion-collapse collapse {{ $isKegiatan ? 'show' : '' }}" aria-labelledby="headingKegiatan" data-bs-parent="#sidebarAccordion">
+                        <div class="accordion-body">
+                            <a href="{{ route('kegiatan.index') }}" class="menu-item {{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">Kegiatan</a>
+                            <a href="{{ route('jadwal-pertandingan.index') }}" class="menu-item {{ request()->routeIs('jadwal-pertandingan.*') ? 'active' : '' }}">Jadwal Tanding</a>
+                            <a href="{{ route('kkpo-sebanten.index') }}" class="menu-item {{ request()->routeIs('kkpo-sebanten.*') ? 'active' : '' }}">KKPO Se-Banten</a>
                         </div>
                     </div>
                 </div>
@@ -576,32 +622,21 @@
                     </h2>
                     <div id="collapsePelaku" class="accordion-collapse collapse {{ $isPelaku ? 'show' : '' }}" aria-labelledby="headingPelaku" data-bs-parent="#sidebarAccordion">
                         <div class="accordion-body">
-                            <a href="{{ route('pelaku.index', 'atlit') }}" class="menu-item {{ request()->is('pelaku/atlit*') ? 'active' : '' }}">Atlit</a>
-                            <a href="{{ route('pelaku.index', 'pelatih') }}" class="menu-item {{ request()->is('pelaku/pelatih*') ? 'active' : '' }}">Pelatih</a>
-                            <a href="{{ route('pelaku.index', 'official') }}" class="menu-item {{ request()->is('pelaku/official*') ? 'active' : '' }}">Official</a>
-                            <a href="{{ route('pelaku.index', 'koni') }}" class="menu-item {{ request()->is('pelaku/koni*') ? 'active' : '' }}">KONI</a>
+                            <a href="{{ route('pelaku.index', 'atlit') }}" class="menu-item {{ request()->is('pelaku-olahraga/atlit*') ? 'active' : '' }}">Atlit</a>
+                            <a href="{{ route('pelaku.index', 'pelatih') }}" class="menu-item {{ request()->is('pelaku-olahraga/pelatih*') ? 'active' : '' }}">Pelatih</a>
+                            <a href="{{ route('pelaku.index', 'official') }}" class="menu-item {{ request()->is('pelaku-olahraga/official*') ? 'active' : '' }}">Official</a>
+                            <a href="{{ route('pelaku.index', 'koni') }}" class="menu-item {{ request()->is('pelaku-olahraga/koni*') ? 'active' : '' }}">KONI</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Accident -->
-                @php $isAccident = request()->routeIs('accident.*'); @endphp
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingAccident">
-                        <button class="accordion-button {{ $isAccident ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccident" aria-expanded="{{ $isAccident ? 'true' : 'false' }}" aria-controls="collapseAccident">
-                            <i class="fas fa-briefcase-medical"></i> Accident
-                        </button>
-                    </h2>
-                    <div id="collapseAccident" class="accordion-collapse collapse {{ $isAccident ? 'show' : '' }}" aria-labelledby="headingAccident" data-bs-parent="#sidebarAccordion">
-                        <div class="accordion-body">
-                            <a href="{{ route('accident.cedera') }}" class="menu-item {{ request()->routeIs('accident.cedera') ? 'active' : '' }}">Cedera</a>
-                            <a href="{{ route('accident.rujukan') }}" class="menu-item {{ request()->routeIs('accident.rujukan') ? 'active' : '' }}">Rujukan</a>
-                        </div>
-                    </div>
-                </div>
+                <a href="{{ route('accident.cedera') }}" style="text-decoration:none; color: #ffffff; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 15px 25px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); display: flex; align-items: center; transition: 0.2s; {{ request()->routeIs('accident.*') ? 'background: rgba(0,0,0,0.08);' : '' }}" onmouseover="this.style.background='rgba(0,0,0,0.08)'" onmouseout="this.style.background='{{ request()->routeIs('accident.*') ? 'rgba(0,0,0,0.08)' : 'transparent' }}'">
+                    <i class="fas fa-briefcase-medical" style="width: 24px; font-size: 1.1rem; margin-right: 12px;"></i> Data Cedera
+                </a>
 
                 <!-- Nakes -->
-                @php $isNakes = request()->routeIs('nakes-jaga.*'); @endphp
+                @php $isNakes = request()->routeIs('nakes-jaga.*', 'master-nakes.*', 'nakes-absen.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingNakes">
                         <button class="accordion-button {{ $isNakes ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNakes" aria-expanded="{{ $isNakes ? 'true' : 'false' }}" aria-controls="collapseNakes">
@@ -610,8 +645,9 @@
                     </h2>
                     <div id="collapseNakes" class="accordion-collapse collapse {{ $isNakes ? 'show' : '' }}" aria-labelledby="headingNakes" data-bs-parent="#sidebarAccordion">
                         <div class="accordion-body">
-                            <a href="{{ route('master-nakes.index') }}" class="menu-item {{ request()->routeIs('master-nakes.*') ? 'active' : '' }}">Data Nakes</a>
-                            <a href="{{ route('nakes-jaga.index') }}" class="menu-item {{ request()->routeIs('nakes-jaga.*') ? 'active' : '' }}">Nakes Jaga</a>
+                            <a href="{{ route('master-nakes.index') }}" class="menu-item {{ request()->routeIs('master-nakes.*') ? 'active' : '' }}">Koordinator Nakes</a>
+                            <a href="{{ route('nakes-jaga.index') }}" class="menu-item {{ request()->routeIs('nakes-jaga.*') ? 'active' : '' }}">Jadwal Jaga</a>
+                            <a href="{{ route('nakes-absen.index') }}" class="menu-item {{ request()->routeIs('nakes-absen.*') ? 'active' : '' }}">Absensi</a>
                         </div>
                     </div>
                 </div>

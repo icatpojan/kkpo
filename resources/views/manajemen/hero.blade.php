@@ -2,8 +2,11 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0 text-dark fw-bold"><i class="fas fa-home me-2 text-primary"></i> Pengaturan Hero (Beranda)</h4>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Pengaturan Web (Beranda)</h1>
+            <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola tampilan banner dan teks di halaman utama aplikasi.</p>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 rounded-4">
@@ -33,7 +36,7 @@
                             <label class="form-label fw-bold">Gambar Hero (Kanan)</label>
                             <div class="mb-3 text-center" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 15px;">
                                 @if($hero->gambar)
-                                    <img src="{{ Storage::url($hero->gambar) }}" alt="Hero Image" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
+                                    <img src="{{ asset($hero->gambar) }}" alt="Hero Image" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
                                 @else
                                     <img src="{{ asset('images/hero-medical.png') }}" alt="Default Hero Image" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: contain;">
                                 @endif

@@ -15,14 +15,16 @@ class CreateJadwalPertandingansTable extends Migration
     {
         Schema::create('jadwal_pertandingans', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('kegiatan_id')->nullable();
             $table->string('jenis_cabor');
             $table->string('kel_cabor')->nullable();
             $table->string('venue');
             $table->integer('jumlah_lapangan')->nullable();
             $table->date('tanggal');
             $table->string('waktu');
-            $table->string('nakes')->nullable();
             $table->timestamps();
+
+            $table->foreign('kegiatan_id')->references('id')->on('kegiatans')->onDelete('cascade');
         });
     }
 

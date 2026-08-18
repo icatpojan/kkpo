@@ -15,16 +15,15 @@ class CreateNakesJagasTable extends Migration
     {
         Schema::create('nakes_jagas', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal');
-            $table->string('cabor');
-            $table->string('venue');
+            $table->unsignedBigInteger('jadwal_pertandingan_id');
             $table->foreignId('nakes_id')->constrained('master_nakes')->onDelete('cascade');
             $table->text('personil')->nullable();
-            $table->integer('jumlah_cedera')->default(0);
             $table->text('keterangan')->nullable();
             $table->string('upload_absen')->nullable();
             $table->string('upload_foto')->nullable();
             $table->timestamps();
+
+            $table->foreign('jadwal_pertandingan_id')->references('id')->on('jadwal_pertandingans')->onDelete('cascade');
         });
     }
 

@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateRiwayatPerawatanCederasTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('riwayat_perawatan_cederas', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('data_cedera_id');
+            $table->dateTime('tanggal_waktu');
+            $table->text('tindakan');
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+
+            $table->foreign('data_cedera_id')->references('id')->on('data_cederas')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('riwayat_perawatan_cederas');
+    }
+}

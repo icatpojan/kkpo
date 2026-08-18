@@ -12,4 +12,9 @@ class PelakuOlahraga extends Model
     {
         return $this->hasMany(DataCedera::class);
     }
+
+    public function dokumens()
+    {
+        return $this->hasMany(DokumenPelakuOlahraga::class);
+    }
 }

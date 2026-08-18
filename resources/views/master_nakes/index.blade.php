@@ -2,20 +2,29 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="fw-bold mb-1" style="color: #0f172a; font-size: 1.8rem; letter-spacing: -0.5px;">Master Data Nakes</h1>
             <p class="mb-0" style="color: #475569; font-size: 0.95rem;">Kelola data profil seluruh tenaga kesehatan (Nakes).</p>
         </div>
-        <button class="btn btn-primary px-4 py-2" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fas fa-plus me-2"></i>TAMBAH DATA
-        </button>
+        <div class="d-grid d-md-flex justify-content-md-end">
+            <button class="btn btn-primary px-4 py-2 text-nowrap" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus me-2"></i>TAMBAH NAKES
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <form action="{{ route('master-nakes.index') }}" method="GET" class="d-flex gap-2" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Cari nama nakes..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
     </div>
 
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-header d-flex justify-content-between align-items-center" style="background:#fff; padding: 20px 24px; border-bottom: 1px solid #e2e8f0;">
             <h5 class="mb-0" style="color: #0f172a; font-weight: 700; font-size: 1.05rem;">Daftar Tenaga Kesehatan</h5>
-            <span style="color: #64748b; font-size: 0.85rem; font-weight: 500;">{{ count($nakes) }} Records</span>
+            <span style="color: #64748b; font-size: 0.85rem; font-weight: 500;">{{ $nakes->total() }} Records</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -24,8 +33,7 @@
                         <tr>
                             <th>NO</th>
                             <th>NAMA LENGKAP</th>
-                            <th>SPESIALISASI</th>
-                            <th>NO. STR</th>
+                            <th>PROFESI</th>
                             <th>INSTANSI ASAL</th>
                             <th>NO. WHATSAPP</th>
                             <th>AKSI</th>
@@ -37,7 +45,6 @@
                             <td>{{ $loop->iteration }}</td>
                             <td><strong>{{ $person->nama }}</strong></td>
                             <td>{{ $person->spesialisasi }}</td>
-                            <td>{{ $person->no_str ?: '-' }}</td>
                             <td>{{ $person->instansi ?: '-' }}</td>
                             <td>{{ $person->no_wa ?: '-' }}</td>
                             <td>
@@ -71,18 +78,12 @@
                                                 <input type="text" name="nama" class="form-control" value="{{ $person->nama }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Spesialisasi Profesi</label>
+                                                <label class="form-label">Profesi</label>
                                                 <input type="text" name="spesialisasi" class="form-control" value="{{ $person->spesialisasi }}" required>
                                             </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Nomor STR</label>
-                                                    <input type="text" name="no_str" class="form-control" value="{{ $person->no_str }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label">No. WhatsApp</label>
-                                                    <input type="text" name="no_wa" class="form-control" value="{{ $person->no_wa }}">
-                                                </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">No. WhatsApp</label>
+                                                <input type="text" name="no_wa" class="form-control" value="{{ $person->no_wa }}">
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Instansi / Asal Klinik</label>
@@ -107,6 +108,11 @@
                     <p>Belum ada data Nakes.</p>
                 </div>
             @endif
+        <div class="card-footer d-flex justify-content-between align-items-center" style="background:#fff; padding: 15px 24px; border-top: 1px solid #e2e8f0;">
+            <span style="color: #64748b; font-size: 0.85rem;">Menampilkan {{ $nakes->firstItem() ?? 0 }} - {{ $nakes->lastItem() ?? 0 }} dari {{ $nakes->total() }}</span>
+            <div>
+                {{ $nakes->withQueryString()->links() }}
+            </div>
         </div>
     </div>
 </div>
@@ -127,18 +133,12 @@
                         <input type="text" name="nama" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Spesialisasi Profesi</label>
+                        <label class="form-label">Profesi</label>
                         <input type="text" name="spesialisasi" class="form-control" required>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Nomor STR</label>
-                            <input type="text" name="no_str" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">No. WhatsApp</label>
-                            <input type="text" name="no_wa" class="form-control">
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">No. WhatsApp</label>
+                        <input type="text" name="no_wa" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Instansi / Asal Klinik</label>

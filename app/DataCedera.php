@@ -12,4 +12,24 @@ class DataCedera extends Model
     {
         return $this->belongsTo(PelakuOlahraga::class);
     }
+
+    public function nakesJaga()
+    {
+        return $this->belongsTo(NakesJaga::class);
+    }
+
+    public function jadwalPertandingan()
+    {
+        return $this->belongsTo(JadwalPertandingan::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(DataCederaImage::class);
+    }
+
+    public function riwayatPerawatans()
+    {
+        return $this->hasMany(RiwayatPerawatanCedera::class)->orderBy('tanggal_waktu', 'desc');
+    }
 }
