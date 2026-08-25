@@ -30,8 +30,8 @@ class DashboardController extends Controller
             $cederaQuery->where('pelaku_olahragas.cabor', $cabor);
         }
 
-        // Base Query for Pelaku Olahraga
-        $pelakuQuery = PelakuOlahraga::query();
+        // Base Query for Pelaku Olahraga (Atlit)
+        $pelakuQuery = PelakuOlahraga::where('kategori', 'atlit');
         if ($cabor != '') {
             $pelakuQuery->where('cabor', $cabor);
         }
@@ -41,6 +41,7 @@ class DashboardController extends Controller
         $incidentCount = $cederaQuery->count();
         $cederaAktif = (clone $cederaQuery)->whereNotIn('data_cederas.status', ['sembuh'])->count();
         $rujukanCount = (clone $cederaQuery)->where('data_cederas.status', 'rujuk')->count();
+        $belumDitangani = (clone $cederaQuery)->where('data_cederas.status', 'cedera')->count();
         
         $totalSembuh = (clone $cederaQuery)->where('data_cederas.status', 'sembuh')->count();
         $sembuhRate = $incidentCount > 0 ? round(($totalSembuh / $incidentCount) * 100) : 0;
@@ -84,7 +85,7 @@ class DashboardController extends Controller
             ->get();
 
         // Dropdown List Data
-        $listCabor = PelakuOlahraga::whereNotNull('cabor')->distinct()->pluck('cabor');
+        $listCabor = PelakuOlahraga::whereNotNull('cabor')->distinct()->orderBy('cabor', 'asc')->pluck('cabor');
         // List years based on existing records
         $listTahun = DataCedera::whereNotNull('waktu_kejadian')
             ->select(DB::raw('YEAR(waktu_kejadian) as year'))
@@ -97,7 +98,7 @@ class DashboardController extends Controller
 
         return view('home', compact(
             'tahun', 'cabor', 'listCabor', 'listTahun',
-            'athleteCount', 'incidentCount', 'cederaAktif', 'rujukanCount', 'sembuhRate', 'totalSembuh',
+            'athleteCount', 'incidentCount', 'cederaAktif', 'rujukanCount', 'sembuhRate', 'totalSembuh', 'belumDitangani',
             'trendLabels', 'trendData',
             'bodyPartLabels', 'bodyPartData',
             'caborLabels', 'caborData',

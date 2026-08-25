@@ -151,6 +151,8 @@
                                             <li><a class="dropdown-item fw-bold" href="{{ route('accident.print-tahap-1', $cedera->id) }}" target="_blank"><i class="fas fa-file-pdf text-danger me-2"></i>Form 1 (KK 1 Tahap I)</a></li>
                                             <li><a class="dropdown-item fw-bold" href="{{ route('accident.print-tahap-2', $cedera->id) }}" target="_blank"><i class="fas fa-file-pdf text-danger me-2"></i>Form 2 (KK 2 Tahap II)</a></li>
                                             <li><a class="dropdown-item fw-bold" href="{{ route('accident.print-kronologis', $cedera->id) }}" target="_blank"><i class="fas fa-file-pdf text-danger me-2"></i>Form 3 (Berita Acara Kronologis)</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item fw-bold" href="{{ route('accident.print-foto', $cedera->id) }}" target="_blank"><i class="fas fa-images text-danger me-2"></i>Laporan Foto & Perawatan</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -515,11 +517,8 @@
                         <label class="form-label">Pilih RS / Klinik Rujukan</label>
                         <select name="rs_rujukan" class="form-select select2-rujukan" style="width: 100%;" required>
                             <option value="">-- Pilih RS/Klinik --</option>
-                            @php 
-                                $daftar_rs = \App\RumahSakit::orderBy('nama')->get(); 
-                            @endphp
-                            @foreach($daftar_rs as $rs)
-                                <option value="{{ $rs->nama }}">{{ $rs->nama }} ({{ $rs->wilayah }})</option>
+                            @foreach(\App\RumahSakit::orderBy('nama', 'asc')->get() as $rs)
+                                <option value="{{ $rs->nama }}">{{ $rs->nama }}</option>
                             @endforeach
                         </select>
                     </div>

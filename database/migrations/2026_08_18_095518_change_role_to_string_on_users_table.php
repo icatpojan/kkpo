@@ -25,6 +25,7 @@ class ChangeRoleToStringOnUsersTable extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin_cabor','ketua_pertandingan','rumah_sakit','enumerator') NOT NULL DEFAULT 'admin_cabor'");
+        // We leave it as VARCHAR(255) to prevent Data Truncation errors on rollback 
+        // when there are users with new string roles.
     }
 }

@@ -70,4 +70,9 @@ class NakesAbsenController extends Controller
         $pdf = PDF::loadView('nakes_absen.pdf', compact('absens', 'request'))->setPaper('a4', 'portrait');
         return $pdf->stream('laporan_absensi_nakes.pdf');
     }
+
+    public function exportExcel(Request $request)
+    {
+        return \Excel::download(new \App\Exports\NakesAbsenExport($request), 'laporan_absensi_nakes.xlsx');
+    }
 }

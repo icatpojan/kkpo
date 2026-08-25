@@ -5,37 +5,39 @@
     .kpi-card {
         background: #ffffff;
         border-radius: 16px;
-        padding: 24px;
+        padding: 20px 16px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 15px;
         border: 1px solid #f1f5f9;
         transition: transform 0.2s;
+        height: 100%;
     }
     .kpi-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     }
     .kpi-icon {
-        width: 56px;
-        height: 56px;
+        width: 52px;
+        height: 52px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        flex-shrink: 0;
     }
     .kpi-info h3 {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         color: #64748b;
         font-weight: 600;
         text-transform: uppercase;
-        margin-bottom: 5px;
-        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+        letter-spacing: 0.2px;
     }
     .kpi-info h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #0f172a;
         margin: 0;
@@ -103,51 +105,72 @@
         </form>
     </div>
 
-    <!-- 4 KPIs Row -->
+    <!-- 5 KPIs Row -->
     <div class="row mb-4">
-        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-            <div class="kpi-card">
-                <div class="kpi-icon" style="background: #e0f2fe; color: #0284c7;">
-                    <i class="fas fa-users"></i>
+        <div class="col-xl col-lg-4 col-md-6 mb-3 mb-xl-0">
+            <a href="{{ route('pelaku.index', 'atlit') }}" class="text-decoration-none">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: #e0f2fe; color: #0284c7;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-info">
+                        <h3>Total Atlet</h3>
+                        <h2>{{ number_format($athleteCount) }}</h2>
+                    </div>
                 </div>
-                <div class="kpi-info">
-                    <h3>Total Atlet</h3>
-                    <h2>{{ number_format($athleteCount) }}</h2>
-                </div>
-            </div>
+            </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-            <div class="kpi-card">
-                <div class="kpi-icon" style="background: #fef3c7; color: #d97706;">
-                    <i class="fas fa-user-injured"></i>
+        <div class="col-xl col-lg-4 col-md-6 mb-3 mb-xl-0">
+            <a href="{{ route('accident.cedera') }}" class="text-decoration-none">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: #fef3c7; color: #d97706;">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="kpi-info">
+                        <h3>Laporan Cedera</h3>
+                        <h2>{{ number_format($incidentCount) }}</h2>
+                    </div>
                 </div>
-                <div class="kpi-info">
-                    <h3>Total Cedera</h3>
-                    <h2>{{ number_format($incidentCount) }}</h2>
-                </div>
-            </div>
+            </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-            <div class="kpi-card">
-                <div class="kpi-icon" style="background: #dcfce7; color: #16a34a;">
-                    <i class="fas fa-heartbeat"></i>
+        <div class="col-xl col-lg-4 col-md-6 mb-3 mb-xl-0">
+            <a href="{{ route('accident.cedera', ['status' => 'cedera']) }}" class="text-decoration-none">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: #f1f5f9; color: #475569;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-info">
+                        <h3>Belum Ditangani</h3>
+                        <h2>{{ number_format($belumDitangani) }}</h2>
+                    </div>
                 </div>
-                <div class="kpi-info">
-                    <h3>Sembuh</h3>
-                    <h2>{{ number_format($totalSembuh) }}</h2>
-                </div>
-            </div>
+            </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-            <div class="kpi-card">
-                <div class="kpi-icon" style="background: #fee2e2; color: #dc2626;">
-                    <i class="fas fa-ambulance"></i>
+        <div class="col-xl col-lg-4 col-md-6 mb-3 mb-xl-0">
+            <a href="{{ route('accident.cedera', ['status' => 'sembuh']) }}" class="text-decoration-none">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: #dcfce7; color: #16a34a;">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="kpi-info">
+                        <h3>Sudah Sembuh</h3>
+                        <h2>{{ number_format($totalSembuh) }}</h2>
+                    </div>
                 </div>
-                <div class="kpi-info">
-                    <h3>Dirujuk Ke RS</h3>
-                    <h2>{{ number_format($rujukanCount) }}</h2>
+            </a>
+        </div>
+        <div class="col-xl col-lg-4 col-md-6 mb-3 mb-xl-0">
+            <a href="{{ route('accident.cedera', ['status' => 'rujuk']) }}" class="text-decoration-none">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: #fee2e2; color: #dc2626;">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div class="kpi-info">
+                        <h3>Dirujuk Ke RS</h3>
+                        <h2>{{ number_format($rujukanCount) }}</h2>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 

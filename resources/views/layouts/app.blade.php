@@ -578,6 +578,7 @@
             </a>
             <div class="accordion accordion-flush" id="sidebarAccordion">
                 <!-- Manajemen Web -->
+                @if(auth()->user()->role === 'admin')
                 @php $isManajemen = request()->routeIs('hero.*', 'tentang.*', 'struktur.*', 'berita.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingManajemen">
@@ -594,8 +595,10 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- Master Kegiatan -->
+                @if(in_array(auth()->user()->role, ['admin', 'ketua_panitia', 'kabid_kesehatan', 'koni']))
                 @php $isKegiatan = request()->routeIs('kegiatan.*', 'jadwal-pertandingan.*', 'kkpo-sebanten.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingKegiatan">
@@ -611,6 +614,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- Pelaku Olahraga -->
                 @php $isPelaku = request()->routeIs('pelaku.*'); @endphp
@@ -636,6 +640,7 @@
                 </a>
 
                 <!-- Nakes -->
+                @if(in_array(auth()->user()->role, ['admin', 'ketua_panitia', 'kabid_kesehatan', 'koni']))
                 @php $isNakes = request()->routeIs('nakes-jaga.*', 'master-nakes.*', 'nakes-absen.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingNakes">
@@ -651,6 +656,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
 

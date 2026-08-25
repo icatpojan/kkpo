@@ -5,11 +5,13 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use App\KelompokCabor;
 use App\Cabor;
 use App\Kota;
 
-class PelakuOlahragaReferensiSheet implements FromCollection, WithHeadings, WithTitle
+class PelakuOlahragaReferensiSheet implements FromCollection, WithHeadings, WithTitle, WithEvents
 {
     public function title(): string
     {
@@ -50,5 +52,25 @@ class PelakuOlahragaReferensiSheet implements FromCollection, WithHeadings, With
         }
 
         return collect($rows);
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+                
+                // Auto-size all columns in reference sheet
+                foreach (range('A', 'E') as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
+                }
+
+                // Styling the header
+                $sheet->getStyle('A1:E1')->applyFromArray([
+                    'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
+                    'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF6C757D']],
+                ]);
+            },
+        ];
     }
 }

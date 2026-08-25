@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin KKPO',
             'email' => 'admin@kkpo.id',
             'password' => bcrypt('password'),
-            'role' => 'admin_cabor',
+            'role' => 'admin',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

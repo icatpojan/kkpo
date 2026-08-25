@@ -41,6 +41,16 @@ class DataCederaController extends Controller
         $end_date = $request->query('end_date');
         $status = $request->query('status');
 
+        if (auth()->check()) {
+            if (auth()->user()->role === 'rs') {
+                $query->where('rs_rujukan', auth()->user()->name);
+            } elseif (auth()->user()->role === 'koni') {
+                $query->whereHas('pelakuOlahraga', function ($q) {
+                    $q->where('kontingen', auth()->user()->name);
+                });
+            }
+        }
+
         if ($search || $cabor) {
             $query->whereHas('pelakuOlahraga', function ($q) use ($search, $cabor) {
                 if ($search) {
@@ -108,7 +118,13 @@ class DataCederaController extends Controller
             'keterangan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
-        $data['status'] = 'cedera';
+        
+        if (auth()->user()->role === 'rs') {
+            $data['status'] = 'rujuk';
+            $data['rs_rujukan'] = auth()->user()->name;
+        } else {
+            $data['status'] = 'cedera';
+        }
 
         $jadwal = \App\JadwalPertandingan::find($data['jadwal_pertandingan_id']);
         if ($jadwal) {
@@ -141,6 +157,9 @@ class DataCederaController extends Controller
     public function rujuk(Request $request, $id)
     {
         $cedera = \App\DataCedera::findOrFail($id);
+        if (auth()->user()->role === 'rs' && $cedera->rs_rujukan !== auth()->user()->name) abort(403);
+        if (auth()->user()->role === 'koni' && $cedera->pelakuOlahraga->kontingen !== auth()->user()->name) abort(403);
+        
         $cedera->update([
             'status' => 'rujuk',
             'rs_rujukan' => $request->rs_rujukan,
@@ -152,6 +171,8 @@ class DataCederaController extends Controller
     public function sembuh(Request $request, $id)
     {
         $cedera = \App\DataCedera::findOrFail($id);
+        if (auth()->user()->role === 'rs' && $cedera->rs_rujukan !== auth()->user()->name) abort(403);
+        if (auth()->user()->role === 'koni' && $cedera->pelakuOlahraga->kontingen !== auth()->user()->name) abort(403);
         
         $data = $request->validate([
             'tanggal_waktu' => 'required|date',
@@ -175,6 +196,8 @@ class DataCederaController extends Controller
     public function storePerawatan(Request $request, $id)
     {
         $cedera = \App\DataCedera::findOrFail($id);
+        if (auth()->user()->role === 'rs' && $cedera->rs_rujukan !== auth()->user()->name) abort(403);
+        if (auth()->user()->role === 'koni' && $cedera->pelakuOlahraga->kontingen !== auth()->user()->name) abort(403);
         $data = $request->validate([
             'tanggal_waktu' => 'required|date',
             'tindakan' => 'required|string',
@@ -202,6 +225,9 @@ class DataCederaController extends Controller
     private function preparePdfData($id)
     {
         $cedera = \App\DataCedera::with(['pelakuOlahraga', 'nakesJaga.jadwalPertandingan.kegiatan'])->findOrFail($id);
+        if (auth()->user()->role === 'rs' && $cedera->rs_rujukan !== auth()->user()->name) abort(403);
+        if (auth()->user()->role === 'koni' && $cedera->pelakuOlahraga->kontingen !== auth()->user()->name) abort(403);
+        
         $pelaku = $cedera->pelakuOlahraga;
         
         $kegiatan_nama = 'VENUE';
@@ -243,5 +269,15 @@ class DataCederaController extends Controller
         
         $pdf = PDF::loadView('data_cedera.pdf_kronologis', $data);
         return $pdf->stream('Form_3_Berita_Acara_Kronologis_' . $data['pelaku']->nama . '.pdf');
+    }
+
+    public function printFoto($id)
+    {
+        $cedera = \App\DataCedera::with(['pelakuOlahraga', 'images', 'riwayatPerawatans'])->findOrFail($id);
+        if (auth()->user()->role === 'rs' && $cedera->rs_rujukan !== auth()->user()->name) abort(403);
+        if (auth()->user()->role === 'koni' && $cedera->pelakuOlahraga->kontingen !== auth()->user()->name) abort(403);
+        
+        $pdf = PDF::loadView('data_cedera.pdf_foto', compact('cedera'));
+        return $pdf->stream('Laporan_Foto_Perawatan_' . ($cedera->pelakuOlahraga->nama ?? 'Pasien') . '.pdf');
     }
 }

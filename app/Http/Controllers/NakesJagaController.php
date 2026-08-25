@@ -22,8 +22,8 @@ class NakesJagaController extends Controller
         $master_nakes = \App\MasterNakes::all();
         $listKelompok = \App\KelompokCabor::pluck('nama', 'kode')->toArray();
         $listCabor = [];
-        foreach(\App\Cabor::all() as $c) {
-            $listCabor[$c->kelompok_kode][$c->kode] = $c->nama;
+        foreach(\App\Cabor::orderBy('nama', 'asc')->get() as $c) {
+            $listCabor[$c->kelompok_kode][] = $c->nama;
         }
         $jadwals = \App\JadwalPertandingan::with('kegiatan')->orderBy('tanggal', 'desc')->get();
         return view('nakes_jaga.index', compact('nakes', 'master_nakes', 'search', 'listKelompok', 'listCabor', 'jadwals'));

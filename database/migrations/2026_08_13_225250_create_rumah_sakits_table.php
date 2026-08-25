@@ -16,7 +16,7 @@ class CreateRumahSakitsTable extends Migration
         Schema::create('rumah_sakits', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('wilayah')->nullable();
+            $table->string('tipe')->nullable();
             $table->timestamps();
         });
     }

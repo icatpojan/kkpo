@@ -45,39 +45,47 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     
-    // Manajemen
-    Route::get('/manajemen/tentang', 'TentangKkpoController@index')->name('tentang.index');
-    Route::post('/manajemen/tentang', 'TentangKkpoController@store')->name('tentang.store');
-    Route::put('/manajemen/tentang/{id}', 'TentangKkpoController@update')->name('tentang.update');
-    Route::delete('/manajemen/tentang/{id}', 'TentangKkpoController@destroy')->name('tentang.destroy');
-    
-    Route::get('/manajemen/struktur', 'StrukturOrganisasiController@index')->name('struktur.index');
-    Route::post('/manajemen/struktur', 'StrukturOrganisasiController@store')->name('struktur.store');
-    Route::put('/manajemen/struktur/{id}', 'StrukturOrganisasiController@update')->name('struktur.update');
-    Route::delete('/manajemen/struktur/{id}', 'StrukturOrganisasiController@destroy')->name('struktur.destroy');
-    
-    Route::get('/manajemen/kegiatan', 'KegiatanController@index')->name('kegiatan.index');
-    Route::post('/manajemen/kegiatan', 'KegiatanController@store')->name('kegiatan.store');
-    Route::put('/manajemen/kegiatan/{id}', 'KegiatanController@update')->name('kegiatan.update');
-    Route::delete('/manajemen/kegiatan/{id}', 'KegiatanController@destroy')->name('kegiatan.destroy');
-    Route::get('/manajemen/berita', 'BeritaController@index')->name('berita.index');
-    Route::post('/manajemen/berita', 'BeritaController@store')->name('berita.store');
-    Route::put('/manajemen/berita/{id}', 'BeritaController@update')->name('berita.update');
-    Route::delete('/manajemen/berita/{id}', 'BeritaController@destroy')->name('berita.destroy');
+    // Manajemen (Hanya Admin)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/manajemen/tentang', 'TentangKkpoController@index')->name('tentang.index');
+        Route::post('/manajemen/tentang', 'TentangKkpoController@store')->name('tentang.store');
+        Route::put('/manajemen/tentang/{id}', 'TentangKkpoController@update')->name('tentang.update');
+        Route::delete('/manajemen/tentang/{id}', 'TentangKkpoController@destroy')->name('tentang.destroy');
+        
+        Route::get('/manajemen/struktur', 'StrukturOrganisasiController@index')->name('struktur.index');
+        Route::post('/manajemen/struktur', 'StrukturOrganisasiController@store')->name('struktur.store');
+        Route::put('/manajemen/struktur/{id}', 'StrukturOrganisasiController@update')->name('struktur.update');
+        Route::delete('/manajemen/struktur/{id}', 'StrukturOrganisasiController@destroy')->name('struktur.destroy');
+        
+        Route::get('/manajemen/berita', 'BeritaController@index')->name('berita.index');
+        Route::post('/manajemen/berita', 'BeritaController@store')->name('berita.store');
+        Route::put('/manajemen/berita/{id}', 'BeritaController@update')->name('berita.update');
+        Route::delete('/manajemen/berita/{id}', 'BeritaController@destroy')->name('berita.destroy');
 
-    Route::get('/manajemen/hero', 'HeroSectionController@index')->name('hero.index');
-    Route::put('/manajemen/hero', 'HeroSectionController@update')->name('hero.update');
-    
-    // Resource Controllers for Tables
-    Route::resource('jadwal-pertandingan', 'JadwalPertandinganController');
-    Route::resource('kkpo-sebanten', 'KkpoSebantenController');
-    Route::resource('master-nakes', 'MasterNakesController');
-    Route::resource('nakes-jaga', 'NakesJagaController');
-    Route::post('/nakes-jaga/{id}/absen', 'NakesJagaController@storeAbsen')->name('nakes-jaga.absen.store');
-    Route::delete('/nakes-jaga/absen/{id}', 'NakesJagaController@destroyAbsen')->name('nakes-jaga.absen.destroy');
+        Route::get('/manajemen/hero', 'HeroSectionController@index')->name('hero.index');
+        Route::put('/manajemen/hero', 'HeroSectionController@update')->name('hero.update');
+    });
 
-    Route::get('/nakes-absen', 'NakesAbsenController@index')->name('nakes-absen.index');
-    Route::get('/nakes-absen-pdf', 'NakesAbsenController@exportPdf')->name('nakes-absen.pdf');
+    // Master Kegiatan & Nakes (Admin, Ketua Panitia, Kabid Kesehatan, KONI)
+    // admin_cabor tidak bisa akses. nakes dan rs juga tidak bisa akses.
+    Route::middleware('role:admin,ketua_panitia,kabid_kesehatan,koni')->group(function () {
+        // Master Kegiatan
+        Route::get('/manajemen/kegiatan', 'KegiatanController@index')->name('kegiatan.index');
+        Route::post('/manajemen/kegiatan', 'KegiatanController@store')->name('kegiatan.store');
+        Route::put('/manajemen/kegiatan/{id}', 'KegiatanController@update')->name('kegiatan.update');
+        Route::delete('/manajemen/kegiatan/{id}', 'KegiatanController@destroy')->name('kegiatan.destroy');
+        Route::resource('jadwal-pertandingan', 'JadwalPertandinganController');
+        Route::resource('kkpo-sebanten', 'KkpoSebantenController');
+
+        // Nakes
+        Route::resource('master-nakes', 'MasterNakesController');
+        Route::resource('nakes-jaga', 'NakesJagaController');
+        Route::post('/nakes-jaga/{id}/absen', 'NakesJagaController@storeAbsen')->name('nakes-jaga.absen.store');
+        Route::delete('/nakes-jaga/absen/{id}', 'NakesJagaController@destroyAbsen')->name('nakes-jaga.absen.destroy');
+        Route::get('/nakes-absen', 'NakesAbsenController@index')->name('nakes-absen.index');
+        Route::get('/nakes-absen-pdf', 'NakesAbsenController@exportPdf')->name('nakes-absen.pdf');
+        Route::get('/nakes-absen-excel', 'NakesAbsenController@exportExcel')->name('nakes-absen.excel');
+    });
     
     // Pelaku Olah Raga
     Route::get('/pelaku-olahraga/template/excel', 'PelakuOlahragaController@downloadTemplate')->name('pelaku.template');
@@ -104,6 +112,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/accident/{id}/print-tahap-1', 'DataCederaController@printTahap1')->name('accident.print-tahap-1');
     Route::get('/accident/{id}/print-tahap-2', 'DataCederaController@printTahap2')->name('accident.print-tahap-2');
     Route::get('/accident/{id}/print-kronologis', 'DataCederaController@printKronologis')->name('accident.print-kronologis');
+    Route::get('/accident/{id}/print-foto', 'DataCederaController@printFoto')->name('accident.print-foto');
 });
 
 Auth::routes();

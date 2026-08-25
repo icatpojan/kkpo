@@ -19,7 +19,7 @@
 
     <div class="mb-4 bg-white p-3 rounded-3 shadow-sm border" style="border-color: #e2e8f0;">
         <form action="{{ route('pelaku.index', $kategori) }}" method="GET" class="row g-2 align-items-end">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.8rem;">Cari Nama</label>
                 <input type="text" name="search" class="form-control" placeholder="Ketik nama..." value="{{ request('search') }}">
             </div>
@@ -33,7 +33,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.8rem;">Cabang Olahraga</label>
                 <select name="cabor" class="form-select" id="cabor_filter">
                     <option value="">Semua Cabor</option>
@@ -52,6 +52,15 @@
                             @endforeach
                         @endif
                     @endif
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.8rem;">Kontingen</label>
+                <select name="kontingen" class="form-select">
+                    <option value="">Semua</option>
+                    @foreach($listKota as $key => $val)
+                        <option value="{{ $val }}" {{ request('kontingen') == $val ? 'selected' : '' }}>{{ $val }}</option>
+                    @endforeach
                 </select>
             </div>
             @endif
@@ -725,14 +734,17 @@
             const caborSelect = document.getElementById('cabor_filter');
             caborSelect.innerHTML = '<option value="">Semua Cabor</option>';
             if (kel && caborData[kel]) {
-                for (const [code, name] of Object.entries(caborData[kel])) {
+                const cabors = caborData[kel];
+                const caborArray = Array.isArray(cabors) ? cabors : Object.values(cabors);
+                for (const name of caborArray) {
                     caborSelect.innerHTML += `<option value="${name}">${name}</option>`;
                 }
             } else if (!kel) {
                 for (const [k, cabors] of Object.entries(caborData)) {
                     let label = kelompokData[k] ? kelompokData[k] : k;
                     let optgroup = `<optgroup label="${label}">`;
-                    for (const [code, name] of Object.entries(cabors)) {
+                    const caborArray = Array.isArray(cabors) ? cabors : Object.values(cabors);
+                    for (const name of caborArray) {
                         optgroup += `<option value="${name}">${name}</option>`;
                     }
                     optgroup += `</optgroup>`;
@@ -749,7 +761,9 @@
             const caborSelect = document.getElementById('cabor_create');
             caborSelect.innerHTML = '<option value="">-- Pilih Cabor --</option>';
             if (kel && caborData[kel]) {
-                for (const [code, name] of Object.entries(caborData[kel])) {
+                const cabors = caborData[kel];
+                const caborArray = Array.isArray(cabors) ? cabors : Object.values(cabors);
+                for (const name of caborArray) {
                     caborSelect.innerHTML += `<option value="${name}">${name}</option>`;
                 }
             }
@@ -763,7 +777,9 @@
             const kel = this.value;
             caborSelect.innerHTML = '<option value="">-- Pilih Cabor --</option>';
             if (kel && caborData[kel]) {
-                for (const [code, name] of Object.entries(caborData[kel])) {
+                const cabors = caborData[kel];
+                const caborArray = Array.isArray(cabors) ? cabors : Object.values(cabors);
+                for (const name of caborArray) {
                     caborSelect.innerHTML += `<option value="${name}">${name}</option>`;
                 }
             }
@@ -779,7 +795,9 @@
             const selectedCabor = caborSelect.getAttribute('data-selected');
             caborSelect.innerHTML = '<option value="">-- Pilih Cabor --</option>';
             if (kel && caborData[kel]) {
-                for (const [code, name] of Object.entries(caborData[kel])) {
+                const cabors = caborData[kel];
+                const caborArray = Array.isArray(cabors) ? cabors : Object.values(cabors);
+                for (const name of caborArray) {
                     const isSelected = selectedCabor === name ? 'selected' : '';
                     caborSelect.innerHTML += `<option value="${name}" ${isSelected}>${name}</option>`;
                 }

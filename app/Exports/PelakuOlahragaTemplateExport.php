@@ -9,6 +9,7 @@ class PelakuOlahragaTemplateExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
+            new PelakuOlahragaInstruksiSheet(),
             new PelakuOlahragaDataSheet(),
             new PelakuOlahragaReferensiSheet(),
         ];

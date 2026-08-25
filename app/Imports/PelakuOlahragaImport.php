@@ -37,6 +37,11 @@ class PelakuOlahragaImport implements ToModel, WithHeadingRow
         // 'Keterangan Bagian (Khusus Official)' -> 'keterangan_bagian_khusus_official'
         // 'Keterangan Jabatan (Khusus KONI)' -> 'keterangan_jabatan_khusus_koni'
 
+        // Skip example row
+        if (trim($row['nama_lengkap_wajib'] ?? '') === 'Contoh Nama Atlit') {
+            return null;
+        }
+
         $data = [
             'kategori' => $row['kategori_wajib'] ?? null,
             'nama' => $row['nama_lengkap_wajib'] ?? null,
@@ -52,6 +57,56 @@ class PelakuOlahragaImport implements ToModel, WithHeadingRow
             'bagian' => $row['keterangan_bagian_khusus_official'] ?? null,
             'koni' => $row['keterangan_jabatan_khusus_koni'] ?? null,
         ];
+
+        // Generate Nomor Anggota
+        if ($data['kategori'] && $data['kategori'] != 'koni') {
+            $prefixKategori = strtoupper($data['kategori']);
+            $kodeKelompok = '';
+            
+            $kelCabor = \App\KelompokCabor::where('nama', $data['kel_cabor'])->first();
+            if ($kelCabor) {
+                $kodeKelompok = $kelCabor->kode;
+            }
+            
+            $kodeCabor = '';
+            if ($kodeKelompok) {
+                $cabor = \App\Cabor::where('kelompok_kode', $kodeKelompok)->where('nama', $data['cabor'])->first();
+                if ($cabor) {
+                    $kodeCabor = $cabor->kode;
+                }
+            }
+            
+            $kodeKota = '';
+            $kota = \App\Kota::where('nama', $data['kontingen'])->first();
+            if ($kota) {
+                $kodeKota = $kota->kode;
+            }
+            
+            if ($kodeKelompok && $kodeCabor && $kodeKota) {
+                $prefix = $prefixKategori . ' ' . $kodeKelompok . $kodeCabor . '-' . $kodeKota . '-';
+                $latest = \App\PelakuOlahraga::where('nomor_anggota', 'like', $prefix . '%')
+                            ->orderBy('nomor_anggota', 'desc')
+                            ->first();
+                if ($latest && preg_match('/-(\d+)$/', $latest->nomor_anggota, $matches)) {
+                    $nextUrut = intval($matches[1]) + 1;
+                } else {
+                    $nextUrut = 1;
+                }
+                $data['nomor_anggota'] = $prefix . str_pad($nextUrut, 4, '0', STR_PAD_LEFT);
+            }
+        } elseif ($data['kategori'] == 'koni') {
+            // Kategori KONI
+            $prefix = 'KONI ' . date('Y') . '-';
+            $latest = \App\PelakuOlahraga::where('nomor_anggota', 'like', $prefix . '%')
+                        ->orderBy('nomor_anggota', 'desc')
+                        ->first();
+            if ($latest && preg_match('/-(\d+)$/', $latest->nomor_anggota, $matches)) {
+                $nextUrut = intval($matches[1]) + 1;
+            } else {
+                $nextUrut = 1;
+            }
+            $data['nomor_anggota'] = $prefix . str_pad($nextUrut, 4, '0', STR_PAD_LEFT);
+        }
 
         $validator = Validator::make($data, [
             'kategori' => 'required|in:atlit,pelatih,official,koni',

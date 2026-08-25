@@ -14,16 +14,20 @@ class PelakuOlahragaController extends Controller
         $cabor = $request->query('cabor');
         $kel_cabor = $request->query('kel_cabor');
         $jk = $request->query('jk');
+        $kontingen = $request->query('kontingen');
 
         $listKelompok = \App\KelompokCabor::pluck('nama', 'kode')->toArray();
         $listKota = \App\Kota::pluck('nama', 'kode')->toArray();
         $listCabor = [];
-        foreach(\App\Cabor::all() as $c) {
-            $listCabor[$c->kelompok_kode][$c->kode] = $c->nama;
+        foreach(\App\Cabor::orderBy('nama', 'asc')->get() as $c) {
+            $listCabor[$c->kelompok_kode][] = $c->nama;
         }
 
         $pelakus = PelakuOlahraga::with(['dataCederas.riwayatPerawatans', 'dokumens'])
                     ->where('kategori', $kategori)
+                    ->when(auth()->user()->role === 'koni', function ($query) {
+                        return $query->where('kontingen', auth()->user()->name);
+                    })
                     ->when($search, function ($query, $search) {
                         return $query->where('nama', 'like', "%{$search}%");
                     })
@@ -37,9 +41,12 @@ class PelakuOlahragaController extends Controller
                     ->when($jk, function ($query, $jk) {
                         return $query->where('jk', $jk);
                     })
+                    ->when($kontingen, function ($query, $kontingen) {
+                        return $query->where('kontingen', $kontingen);
+                    })
                     ->latest()
                     ->paginate(5);
-        return view('pelaku_olahraga.index', compact('pelakus', 'kategori', 'search', 'cabor', 'kel_cabor', 'jk', 'listCabor', 'listKelompok', 'listKota'));
+        return view('pelaku_olahraga.index', compact('pelakus', 'kategori', 'search', 'cabor', 'kel_cabor', 'jk', 'kontingen', 'listCabor', 'listKelompok', 'listKota'));
     }
 
     public function create($kategori)
@@ -124,6 +131,10 @@ class PelakuOlahragaController extends Controller
             $data['kel_cabor'] = \App\KelompokCabor::where('kode', $data['kel_cabor'])->value('nama') ?? $data['kel_cabor'];
         }
 
+        if (auth()->user()->role === 'koni') {
+            $data['kontingen'] = auth()->user()->name;
+        }
+
         $pelaku = PelakuOlahraga::create($data);
 
         if ($dokumens) {
@@ -143,6 +154,9 @@ class PelakuOlahragaController extends Controller
     public function edit($id)
     {
         $pelaku = PelakuOlahraga::findOrFail($id);
+        if (auth()->user()->role === 'koni' && $pelaku->kontingen !== auth()->user()->name) {
+            abort(403, 'Unauthorized action.');
+        }
         $kategori = $pelaku->kategori;
         return view('pelaku_olahraga.edit', compact('pelaku', 'kategori'));
     }
@@ -150,6 +164,9 @@ class PelakuOlahragaController extends Controller
     public function update(Request $request, $id)
     {
         $pelaku = PelakuOlahraga::findOrFail($id);
+        if (auth()->user()->role === 'koni' && $pelaku->kontingen !== auth()->user()->name) {
+            abort(403, 'Unauthorized action.');
+        }
         $data = $request->validate([
             'nama' => 'required|string',
             'jk' => 'required|in:L,P',
@@ -225,6 +242,10 @@ class PelakuOlahragaController extends Controller
             $data['kel_cabor'] = \App\KelompokCabor::where('kode', $data['kel_cabor'])->value('nama') ?? $data['kel_cabor'];
         }
 
+        if (auth()->user()->role === 'koni') {
+            $data['kontingen'] = auth()->user()->name;
+        }
+
         $pelaku->update($data);
         return redirect()->route('pelaku.index', $pelaku->kategori)->with('success', 'Data berhasil diubah');
     }
@@ -232,6 +253,9 @@ class PelakuOlahragaController extends Controller
     public function destroy($id)
     {
         $pelaku = PelakuOlahraga::findOrFail($id);
+        if (auth()->user()->role === 'koni' && $pelaku->kontingen !== auth()->user()->name) {
+            abort(403, 'Unauthorized action.');
+        }
         $kategori = $pelaku->kategori;
 
         // Delete all associated files

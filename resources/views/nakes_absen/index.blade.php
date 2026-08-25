@@ -4,7 +4,7 @@
 <div class="container-fluid px-4 py-4">
     <div class="row mb-4 align-items-center">
         <div class="col-12">
-            <h2 class="fw-bold mb-0 text-dark"><i class="fas fa-clipboard-list text-primary me-2"></i>Data Absensi NAKES</h2>
+            <h3 class="fw-bold mb-0 text-dark">Data Absensi Nakes</h3>
             <p class="text-muted mb-0 mt-1">Daftar kehadiran Tenaga Kesehatan di berbagai kegiatan</p>
         </div>
     </div>
@@ -22,17 +22,20 @@
                         <label class="form-label text-muted fw-semibold small">Sampai Tanggal</label>
                         <input type="date" name="end_date" class="form-control bg-light" value="{{ request('end_date') }}">
                     </div>
-                    <div class="col-lg-4 col-md-12">
-                        <label class="form-label text-muted fw-semibold small">Cari Nama/Instansi/Kegiatan</label>
-                        <input type="text" name="search" class="form-control bg-light" placeholder="Masukkan kata kunci..." value="{{ request('search') }}">
+                    <div class="col-lg-3 col-md-12">
+                        <label class="form-label text-muted fw-semibold small">Cari </label>
+                        <input type="text" name="search" class="form-control bg-light" placeholder="Nama/Instansi/Kegiatan..." value="{{ request('search') }}">
                     </div>
-                    <div class="col-lg-4 col-md-12 d-flex gap-2">
+                    <div class="col-lg-5 col-md-12 d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-grow-1 fw-bold" style="padding-top: 0.5rem; padding-bottom: 0.5rem;"><i class="fas fa-search me-1"></i> Filter</button>
                         @if(request()->hasAny(['start_date', 'end_date', 'search']))
                             <a href="{{ route('nakes-absen.index') }}" class="btn btn-outline-secondary" style="padding: 0.5rem 0.75rem;" title="Reset Filter"><i class="fas fa-undo"></i></a>
                         @endif
                         <a href="{{ route('nakes-absen.pdf', request()->all()) }}" target="_blank" class="btn btn-danger fw-bold px-3" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
-                            <i class="fas fa-file-pdf me-2"></i> Export
+                            <i class="fas fa-file-pdf me-2"></i> PDF
+                        </a>
+                        <a href="{{ route('nakes-absen.excel', request()->all()) }}" target="_blank" class="btn btn-success fw-bold px-3" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
+                            <i class="fas fa-file-excel me-2"></i> Excel
                         </a>
                     </div>
                 </div>
@@ -46,20 +49,20 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="py-3 px-4 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">No</th>
-                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Waktu Absen</th>
-                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Koordinator & Instansi</th>
-                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Kegiatan & Cabor</th>
-                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Venue</th>
-                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Keterangan & Info Bank</th>
-                        <th class="py-3 px-4 text-center text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bukti</th>
+                        <th class="py-3 px-4 text-uppercase text-nowrap" style="font-size: 0.75rem; letter-spacing: 0.5px;">No</th>
+                        <th class="py-3 text-uppercase text-nowrap" style="font-size: 0.75rem; letter-spacing: 0.5px;">Waktu Absen</th>
+                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; min-width: 180px;">Nama & Instansi</th>
+                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; min-width: 180px;">Kegiatan & Cabor</th>
+                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; min-width: 150px;">Venue</th>
+                        <th class="py-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; min-width: 250px;">Keterangan & Info Bank</th>
+                        <th class="py-3 px-4 text-center text-uppercase text-nowrap" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bukti</th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
                     @forelse($absens as $absen)
                     <tr>
                         <td class="px-4 fw-medium">{{ $loop->iteration + $absens->firstItem() - 1 }}</td>
-                        <td>
+                        <td class="text-nowrap">
                             <div class="fw-bold text-dark">{{ $absen->created_at->format('d M Y') }}</div>
                             <div class="small text-muted">{{ $absen->created_at->format('H:i') }} WIB</div>
                         </td>
@@ -84,14 +87,14 @@
                         <td>
                             <div class="mb-1" style="font-size: 0.85rem;">{{ $absen->keterangan ?? '-' }}</div>
                             @if($absen->bank || $absen->norek)
-                                <div class="d-inline-block border rounded px-2 py-1 bg-light">
+                                <div class="d-inline-block border rounded px-2 py-1 bg-light text-nowrap mt-1">
                                     <small class="fw-bold text-dark">{{ $absen->bank ?? 'Bank ?' }}</small>
                                     <small class="text-muted mx-1">|</small>
                                     <small class="text-muted">{{ $absen->norek ?? '-' }}</small>
                                 </div>
                             @endif
                         </td>
-                        <td class="px-4 text-center">
+                        <td class="px-4 text-center text-nowrap">
                             <div class="d-flex justify-content-center gap-2">
                                 @if($absen->foto)
                                     <a href="{{ asset('storage/' . $absen->foto) }}" target="_blank" class="btn btn-sm btn-outline-info" title="Lihat Foto Absen">

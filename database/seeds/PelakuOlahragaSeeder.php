@@ -29,8 +29,8 @@ class PelakuOlahragaSeeder extends Seeder
             ['kel' => 'BD', 'kode' => '01', 'nama' => 'Pencak Silat'],
             ['kel' => 'PR', 'kode' => '17', 'nama' => 'Futsal'],
             ['kel' => 'TR', 'kode' => '03', 'nama' => 'Renang'],
-            ['kel' => 'PR', 'kode' => '04', 'nama' => 'Bola basekt'],
-            ['kel' => 'PR', 'kode' => '03', 'nama' => 'Bulu tangkis'],
+            ['kel' => 'PR', 'kode' => '04', 'nama' => 'Bola Basket'],
+            ['kel' => 'PR', 'kode' => '03', 'nama' => 'Bulu Tangkis'],
             ['kel' => 'TR', 'kode' => '02', 'nama' => 'Atletik'],
         ];
 

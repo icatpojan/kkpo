@@ -1036,9 +1036,9 @@
                                     <label class="form-label" style="font-size: 0.85rem; font-weight: 600; color: #475569;">Kegiatan (Jadwal Pertandingan) <span class="text-danger">*</span></label>
                                     <select name="jadwal_pertandingan_id" class="form-select select2-jadwal-lapor w-100" required>
                                         <option value="">-- Pilih Jadwal --</option>
-                                        @foreach(\App\JadwalPertandingan::orderBy('tanggal', 'asc')->get() as $jadwal)
+                                        @foreach(\App\JadwalPertandingan::whereDate('tanggal', \Carbon\Carbon::today())->orderBy('waktu', 'asc')->get() as $jadwal)
                                             <option value="{{ $jadwal->id }}">
-                                                {{ $jadwal->jenis_cabor }} - {{ \Carbon\Carbon::parse($jadwal->tanggal)->format('d M Y') }} - {{ $jadwal->venue }}
+                                                {{ $jadwal->jenis_cabor }} - {{ $jadwal->waktu }} - {{ $jadwal->venue }}
                                             </option>
                                         @endforeach
                                     </select>
