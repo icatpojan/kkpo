@@ -96,13 +96,23 @@ class DashboardController extends Controller
             array_unshift($listTahun, date('Y'));
         }
 
+        // 7. Klasemen Perolehan Medali
+        $medaliData = \App\HasilPertandingan::getKlasemenMedali();
+
+        // 8. Data for Nakes Quick Action Modals
+        $atlits = PelakuOlahraga::where('kategori', 'atlit')->orderBy('nama')->get();
+        $nakes_jaga_list = \App\NakesJaga::with('jadwalPertandingan')->orderBy('tanggal', 'desc')->get();
+
         return view('home', compact(
             'tahun', 'cabor', 'listCabor', 'listTahun',
             'athleteCount', 'incidentCount', 'cederaAktif', 'rujukanCount', 'sembuhRate', 'totalSembuh', 'belumDitangani',
             'trendLabels', 'trendData',
             'bodyPartLabels', 'bodyPartData',
             'caborLabels', 'caborData',
-            'latestIncidents'
+            'latestIncidents',
+            'medaliData',
+            'atlits',
+            'nakes_jaga_list'
         ));
     }
 }

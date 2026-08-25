@@ -11,6 +11,7 @@ use App\JadwalPertandingan;
 use App\HeroSection;
 use App\KelompokCabor;
 use App\Cabor;
+use App\HasilPertandingan;
 use PDF;
 
 class LandingPageController extends Controller
@@ -87,7 +88,23 @@ class LandingPageController extends Controller
         $kelompokCabors = KelompokCabor::orderBy('nama')->get();
         $cabors = Cabor::orderBy('nama')->get();
         
-        return view('welcome', compact('pelakuOlahragaCount', 'nakesCount', 'kegiatanCount', 'berita', 'jadwal_pertandingans', 'hero', 'calendarEvents', 'atlits', 'nakes_jaga_list', 'kelompokCabors', 'cabors'));
+        // Klasemen Medali
+        $filter_kegiatan_medali = $request->get('filter_kegiatan_medali');
+        $medaliData = HasilPertandingan::getKlasemenMedali($filter_kegiatan_medali);
+        $kegiatansNonKhusus = Kegiatan::where('is_khusus', false)->orderBy('tanggal_mulai', 'desc')->get();
+        $hasilPertandinganList = HasilPertandingan::with(['kegiatan', 'emasPelaku', 'perakPelaku', 'perungguPelaku'])
+            ->when($filter_kegiatan_medali, function($q) use ($filter_kegiatan_medali) {
+                $q->where('kegiatan_id', $filter_kegiatan_medali);
+            })
+            ->latest()
+            ->get();
+        
+        return view('welcome', compact(
+            'pelakuOlahragaCount', 'nakesCount', 'kegiatanCount', 'berita', 
+            'jadwal_pertandingans', 'hero', 'calendarEvents', 'atlits', 
+            'nakes_jaga_list', 'kelompokCabors', 'cabors', 'medaliData',
+            'filter_kegiatan_medali', 'allKegiatans', 'kegiatansNonKhusus', 'hasilPertandinganList'
+        ));
     }
 
     public function cetakJadwalTanding(Request $request)

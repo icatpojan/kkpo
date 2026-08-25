@@ -329,8 +329,113 @@
             .mobile-table .fas { font-size: 0.85rem; }
             .mobile-table th:nth-child(1), .mobile-table td:nth-child(1) { min-width: 130px; } /* Tanggal */
             .mobile-table th:nth-child(2), .mobile-table td:nth-child(2) { min-width: 160px; } /* Kegiatan */
-            .mobile-table th:nth-child(3), .mobile-table td:nth-child(3) { min-width: 130px; } /* Lokasi */
-            .mobile-table th:nth-child(4), .mobile-table td:nth-child(4) { min-width: 200px; } /* Deskripsi */
+
+            /* Mobile Medal Standings Table (Dashboard Style & No Horizontal Scroll) */
+            .table-klasemen-dashboard {
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+            .table-klasemen-dashboard .col-k-no {
+                width: 26px !important;
+                padding-left: 1px !important;
+                padding-right: 1px !important;
+                font-size: 0.68rem !important;
+                letter-spacing: 0 !important;
+            }
+            .table-klasemen-dashboard .col-k-peserta {
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+                font-size: 0.70rem !important;
+                line-height: 1.25 !important;
+                font-weight: 700 !important;
+                word-break: break-word !important;
+            }
+            .table-klasemen-dashboard th.col-k-peserta {
+                font-size: 0.70rem !important;
+                letter-spacing: 0.3px !important;
+            }
+            .table-klasemen-dashboard .col-k-medali {
+                width: 38px !important;
+                padding-left: 1px !important;
+                padding-right: 1px !important;
+                font-size: 0.82rem !important;
+            }
+            .table-klasemen-dashboard .col-k-medali i {
+                font-size: 1.15rem !important;
+                margin-bottom: 0 !important;
+            }
+            .table-klasemen-dashboard .col-k-medali span {
+                display: none !important;
+            }
+            .table-klasemen-dashboard .col-k-total {
+                width: 44px !important;
+                padding-left: 1px !important;
+                padding-right: 1px !important;
+                font-size: 0.82rem !important;
+                white-space: nowrap !important;
+            }
+            .table-klasemen-dashboard th.col-k-total {
+                font-size: 0.70rem !important;
+                letter-spacing: 0.3px !important;
+                white-space: nowrap !important;
+                padding-left: 1px !important;
+                padding-right: 1px !important;
+            }
+            .table-klasemen-dashboard tfoot td {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        /* Custom Modern Modal Pagination */
+        .custom-modal-pagination {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 0;
+            list-style: none;
+            padding-left: 0;
+            flex-wrap: wrap;
+        }
+        .custom-modal-pagination .page-item {
+            margin: 0;
+        }
+        .custom-modal-pagination .page-link {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px !important;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.82rem;
+            min-width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8px;
+            background-color: #ffffff;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+        }
+        .custom-modal-pagination .page-link:hover:not(.active):not(.disabled) {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        .custom-modal-pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+            border-color: #0284c7 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.35);
+        }
+        .custom-modal-pagination .page-item.disabled .page-link {
+            background-color: #f8fafc;
+            color: #cbd5e1;
+            border-color: #e2e8f0;
+            cursor: not-allowed;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -390,8 +495,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#medali">Perolehan Medali</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kegiatan">Jadwal Tanding</a></li>
                     <li class="nav-item"><a class="nav-link" href="#berita">Berita</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#kegiatan">Kegiatan</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
                     @auth
@@ -589,6 +695,271 @@
             </div>
         </div>
     </section>
+
+    <!-- Klasemen Perolehan Medali Section -->
+    <section id="medali" class="py-5" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);">
+        <div class="container">
+            <div class="text-center mb-4">
+                <span class="badge px-3 py-2 rounded-pill shadow-sm mb-2" style="background-color: rgba(130, 168, 199, 0.15); color: var(--primary-dark); font-weight: 700; font-size: 0.85rem;">
+                    <i class="fas fa-medal text-warning me-1"></i> TANGGA JUARA & KLASEMEN
+                </span>
+                <h2 class="section-title">Perolehan Medali</h2>
+                <p class="section-subtitle">Klasemen perolehan medali kejuaraan olahraga Provinsi Banten.</p>
+            </div>
+
+            <!-- Filter Kegiatan & Action Buttons -->
+            <div class="row g-3 align-items-center justify-content-between mb-4">
+                <div class="col-12 col-md-5 col-lg-4">
+                    <form action="{{ url('/#medali') }}" method="GET" class="d-flex align-items-center m-0">
+                        <select name="filter_kegiatan_medali" class="form-select shadow-sm w-100" onchange="this.form.submit()" style="border-radius: 10px; font-size: 0.88rem; font-weight: 600; border-color: #cbd5e1; height: 42px;">
+                            <option value="">-- Semua Kejuaraan / Event --</option>
+                            @foreach($kegiatansNonKhusus as $k)
+                                <option value="{{ $k->id }}" {{ (request('filter_kegiatan_medali') == $k->id || ($filter_kegiatan_medali == $k->id)) ? 'selected' : '' }}>
+                                    {{ $k->nama_kegiatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+                
+                @if($hasilPertandinganList->count() > 0)
+                <div class="col-12 col-md-auto">
+                    <button type="button" class="btn btn-outline-dark btn-sm d-flex align-items-center justify-content-center shadow-sm w-100" data-bs-toggle="modal" data-bs-target="#rincianMedaliModal" style="border-radius: 10px; font-weight: 600; padding: 8px 22px; font-size: 0.88rem; height: 42px; white-space: nowrap;">
+                        <i class="fas fa-list-ul me-2 text-primary"></i> Lihat Rincian Atlet Peraih Medali
+                    </button>
+                </div>
+                @endif
+            </div>
+
+            <!-- Standings Table Container (MATCHING DASHBOARD DESIGN & ZERO MOBILE HORIZONTAL SCROLL) -->
+            <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; background-color: #ffffff; border: 1px solid #f1f5f9;">
+                <div class="w-100" style="overflow-x: hidden;">
+                    <table class="table table-hover align-middle mb-0 text-center table-klasemen-dashboard" style="width: 100%; border-collapse: collapse;">
+                        <!-- Light Header matching dashboard design -->
+                        <thead style="background-color: #ffffff; border-bottom: 1px solid #e2e8f0;">
+                            <tr>
+                                <th class="col-k-no" style="width: 45px; padding: 14px 6px; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border: none;">NO.</th>
+                                <th class="col-k-peserta" style="text-align: left; padding: 14px 12px; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border: none;">PESERTA / DAERAH</th>
+                                <th class="col-k-medali" style="width: 70px; padding: 10px 4px; border: none;">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-medal text-warning" style="font-size: 1.1rem; margin-bottom: 2px;"></i>
+                                        <span style="font-size: 0.68rem; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.5px;">EMAS</span>
+                                    </div>
+                                </th>
+                                <th class="col-k-medali" style="width: 70px; padding: 10px 4px; border: none;">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-medal" style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 2px;"></i>
+                                        <span style="font-size: 0.68rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">PERAK</span>
+                                    </div>
+                                </th>
+                                <th class="col-k-medali" style="width: 70px; padding: 10px 4px; border: none;">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-medal" style="color: #ea580c; font-size: 1.1rem; margin-bottom: 2px;"></i>
+                                        <span style="font-size: 0.68rem; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.5px;">PERUNGGU</span>
+                                    </div>
+                                </th>
+                                <th class="col-k-total" style="width: 70px; padding: 14px 6px; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border: none;">TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($medaliData['klasemen'] as $idx => $row)
+                            <tr style="border-bottom: 1px solid #f1f5f9; background-color: #ffffff;">
+                                <td class="col-k-no" style="padding: 14px 6px; color: #475569; font-weight: 600; font-size: 0.9rem;">
+                                    {{ $idx + 1 }}
+                                </td>
+                                <td class="col-k-peserta" style="text-align: left; padding: 14px 12px; font-weight: 700; color: #1e293b; font-size: 0.88rem;">
+                                    {{ $row['nama'] }}
+                                </td>
+                                <td class="col-k-medali" style="padding: 14px 4px; font-weight: 700; font-size: 0.95rem; color: #1e293b;">
+                                    {{ $row['emas'] }}
+                                </td>
+                                <td class="col-k-medali" style="padding: 14px 4px; font-weight: 700; font-size: 0.95rem; color: #1e293b;">
+                                    {{ $row['perak'] }}
+                                </td>
+                                <td class="col-k-medali" style="padding: 14px 4px; font-weight: 700; font-size: 0.95rem; color: #1e293b;">
+                                    {{ $row['perunggu'] }}
+                                </td>
+                                <td class="col-k-total" style="padding: 14px 6px; font-weight: 700; font-size: 0.95rem; color: #2563eb;">
+                                    {{ $row['total'] }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-medal fa-3x mb-3 text-secondary opacity-50"></i>
+                                    <p class="mb-0 fw-bold">Belum ada data perolehan medali untuk event ini.</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                        <!-- Footer baris JUMLAH TOTAL persis dashboard -->
+                        <tfoot style="background-color: #ffffff; border-top: 1px solid #e2e8f0;">
+                            <tr>
+                                <td colspan="2" class="col-k-peserta" style="padding: 16px 12px; font-weight: 800; font-size: 0.88rem; color: #0f172a; text-align: center; letter-spacing: 0.5px; text-transform: uppercase;">
+                                    JUMLAH TOTAL
+                                </td>
+                                <td class="col-k-medali" style="padding: 16px 4px; font-weight: 800; font-size: 1rem; color: #0f172a;">
+                                    {{ $medaliData['totalEmas'] }}
+                                </td>
+                                <td class="col-k-medali" style="padding: 16px 4px; font-weight: 800; font-size: 1rem; color: #0f172a;">
+                                    {{ $medaliData['totalPerak'] }}
+                                </td>
+                                <td class="col-k-medali" style="padding: 16px 4px; font-weight: 800; font-size: 1rem; color: #0f172a;">
+                                    {{ $medaliData['totalPerPerunggu'] ?? $medaliData['totalPerunggu'] }}
+                                </td>
+                                <td class="col-k-total" style="padding: 16px 6px; font-weight: 800; font-size: 1.05rem; color: #2563eb;">
+                                    {{ $medaliData['grandTotal'] }}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Rincian Pemenang & Cabor -->
+    <div class="modal fade" id="rincianMedaliModal" tabindex="-1" aria-labelledby="rincianMedaliModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+                <!-- Header -->
+                <div class="modal-header text-white px-3 px-md-4 py-3" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+                    <div class="d-flex align-items-center me-auto">
+                        <div class="d-flex align-items-center justify-content-center me-2 me-md-3 rounded-circle shadow-sm" style="width: 38px; height: 38px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0;">
+                            <i class="fas fa-trophy text-warning fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0 text-white" style="font-size: 1.05rem;" id="rincianMedaliModalLabel">Rincian Pemenang Medali</h5>
+                            <small class="text-white-50 d-none d-sm-block" style="font-size: 0.75rem;">Daftar peraih medali emas, perak, dan perunggu per cabang olahraga</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body p-2 p-md-4" style="background-color: #f8fafc;">
+                    <!-- Filter Toolbar inside Modal -->
+                    <div class="card border-0 shadow-sm mb-3" style="border-radius: 12px;">
+                        <div class="card-body p-2 p-md-3">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-12 col-md-5">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: 8px 0 0 8px;">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" id="rincianSearchInput" class="form-control border-start-0 ps-0" placeholder="Cari atlet, cabor, daerah..." style="border-radius: 0 8px 8px 0; font-size: 0.88rem; height: 38px;">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <select id="rincianCaborFilter" class="form-select" style="border-radius: 8px; font-size: 0.88rem; height: 38px;">
+                                        <option value="">-- Semua Cabang Olahraga --</option>
+                                        @php
+                                            $uniqueCabors = $hasilPertandinganList->pluck('cabor')->unique()->sort();
+                                        @endphp
+                                        @foreach($uniqueCabors as $uc)
+                                            <option value="{{ $uc }}">{{ $uc }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <button type="button" id="rincianResetBtn" class="btn btn-light border w-100 fw-bold text-secondary d-flex align-items-center justify-content-center" style="border-radius: 8px; font-size: 0.88rem; height: 38px;">
+                                        <i class="fas fa-redo-alt me-1"></i> Reset Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Card -->
+                    <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="tableRincianMedali" style="font-size: 0.88rem;">
+                                <thead style="background-color: #f1f5f9; color: #475569; border-bottom: 2px solid #e2e8f0;">
+                                    <tr>
+                                        <th style="width: 50px;" class="text-center">No.</th>
+                                        <th style="min-width: 140px;">Cabang Olahraga</th>
+                                        <th style="min-width: 180px;"><i class="fas fa-medal text-warning me-1"></i> Medali Emas</th>
+                                        <th style="min-width: 180px;"><i class="fas fa-medal text-secondary me-1"></i> Medali Perak</th>
+                                        <th style="min-width: 180px;"><i class="fas fa-medal" style="color: #d97706;"></i> Medali Perunggu</th>
+                                        <th style="min-width: 150px;">Kegiatan / Event</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rincianTbody">
+                                    @forelse($hasilPertandinganList as $idx => $h)
+                                    <tr class="rincian-row" 
+                                        data-cabor="{{ strtolower($h->cabor) }}" 
+                                        data-search="{{ strtolower($h->cabor . ' ' . ($h->emasPelaku ? $h->emasPelaku->nama : '') . ' ' . $h->emas_kontingen . ' ' . ($h->perakPelaku ? $h->perakPelaku->nama : '') . ' ' . $h->perak_kontingen . ' ' . ($h->perungguPelaku ? $h->perungguPelaku->nama : '') . ' ' . $h->perunggu_kontingen . ' ' . ($h->kegiatan ? $h->kegiatan->nama_kegiatan : '')) }}">
+                                        <td class="text-center fw-bold text-muted row-number">{{ $idx + 1 }}</td>
+                                        <td>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 fs-6 fw-bold" style="border-radius: 6px;">
+                                                {{ $h->cabor }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark mb-1">{{ $h->emasPelaku ? $h->emasPelaku->nama : '-' }}</div>
+                                            @if($h->emas_kontingen)
+                                                <span class="badge px-2 py-1" style="background-color: #fef08a; color: #854d0e; border: 1px solid #fde047; font-size: 0.72rem; border-radius: 6px;">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ $h->emas_kontingen }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark mb-1">{{ $h->perakPelaku ? $h->perakPelaku->nama : '-' }}</div>
+                                            @if($h->perak_kontingen)
+                                                <span class="badge px-2 py-1" style="background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.72rem; border-radius: 6px;">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ $h->perak_kontingen }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark mb-1">{{ $h->perungguPelaku ? $h->perungguPelaku->nama : '-' }}</div>
+                                            @if($h->perunggu_kontingen)
+                                                <span class="badge px-2 py-1" style="background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; font-size: 0.72rem; border-radius: 6px;">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ $h->perunggu_kontingen }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-secondary border px-2 py-1" style="border-radius: 6px; font-size: 0.75rem;">
+                                                {{ $h->kegiatan ? $h->kegiatan->nama_kegiatan : '-' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr id="rincianEmptyRow">
+                                        <td colspan="6" class="text-center text-muted py-4">Belum ada rincian data hasil pertandingan.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination & Info footer -->
+                        <div class="card-footer bg-white border-top px-3 py-2 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2" id="rincianPaginationContainer">
+                            <div class="small text-muted" id="rincianInfoText">
+                                Menampilkan <span class="fw-bold" id="rincianStart">1</span> - <span class="fw-bold" id="rincianEnd">8</span> dari <span class="fw-bold" id="rincianTotal">0</span> data
+                            </div>
+                            <nav aria-label="Modal Pagination">
+                                <ul class="custom-modal-pagination justify-content-center" id="rincianPaginationList">
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer bg-white px-4 py-3 border-top">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal" style="border-radius: 8px;">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Kegiatan Section -->
     <section id="kegiatan" class="py-5" style="background-color: var(--bg-light);">
@@ -1803,6 +2174,146 @@
                 
                 // Initialize on load
                 filterCabor();
+            }
+        });
+    </script>
+
+    <!-- Script Filter & Pagination Modal Rincian Medali -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('rincianSearchInput');
+            const caborFilter = document.getElementById('rincianCaborFilter');
+            const resetBtn = document.getElementById('rincianResetBtn');
+            const rows = Array.from(document.querySelectorAll('#rincianTbody .rincian-row'));
+            const paginationList = document.getElementById('rincianPaginationList');
+            const startSpan = document.getElementById('rincianStart');
+            const endSpan = document.getElementById('rincianEnd');
+            const totalSpan = document.getElementById('rincianTotal');
+            const emptyRow = document.getElementById('rincianEmptyRow');
+
+            let currentPage = 1;
+            const itemsPerPage = 8;
+            let filteredRows = [...rows];
+
+            function applyFilterAndPaginate() {
+                const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+                const cabor = (caborFilter ? caborFilter.value : '').toLowerCase().trim();
+
+                filteredRows = rows.filter(row => {
+                    const rowSearch = row.getAttribute('data-search') || '';
+                    const rowCabor = row.getAttribute('data-cabor') || '';
+
+                    const matchQuery = !query || rowSearch.includes(query);
+                    const matchCabor = !cabor || rowCabor === cabor;
+
+                    return matchQuery && matchCabor;
+                });
+
+                const totalItems = filteredRows.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+
+                if (currentPage > totalPages) {
+                    currentPage = 1;
+                }
+
+                // Sembunyikan semua row terlebih dahulu
+                rows.forEach(r => r.style.display = 'none');
+
+                if (totalItems === 0) {
+                    if (emptyRow) emptyRow.style.display = '';
+                    if (startSpan) startSpan.textContent = '0';
+                    if (endSpan) endSpan.textContent = '0';
+                    if (totalSpan) totalSpan.textContent = '0';
+                    renderPagination(0, 1);
+                    return;
+                }
+
+                if (emptyRow) emptyRow.style.display = 'none';
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+                // Tampilkan row untuk halaman aktif
+                for (let i = startIndex; i < endIndex; i++) {
+                    filteredRows[i].style.display = '';
+                    const numCell = filteredRows[i].querySelector('.row-number');
+                    if (numCell) {
+                        numCell.textContent = i + 1;
+                    }
+                }
+
+                if (startSpan) startSpan.textContent = startIndex + 1;
+                if (endSpan) endSpan.textContent = endIndex;
+                if (totalSpan) totalSpan.textContent = totalItems;
+
+                renderPagination(totalPages, currentPage);
+            }
+
+            function renderPagination(totalPages, activePage) {
+                if (!paginationList) return;
+                paginationList.innerHTML = '';
+
+                if (totalPages <= 1) return;
+
+                // Tombol Sebelumnya
+                const prevLi = document.createElement('li');
+                prevLi.className = `page-item ${activePage === 1 ? 'disabled' : ''}`;
+                prevLi.innerHTML = `<a class="page-link" href="javascript:void(0)" aria-label="Previous" title="Sebelumnya"><i class="fas fa-chevron-left" style="font-size: 0.72rem;"></i></a>`;
+                prevLi.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        applyFilterAndPaginate();
+                    }
+                });
+                paginationList.appendChild(prevLi);
+
+                // Tombol Nomor Halaman
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageLi = document.createElement('li');
+                    pageLi.className = `page-item ${i === activePage ? 'active' : ''}`;
+                    pageLi.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
+                    const pageNum = i;
+                    pageLi.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        currentPage = pageNum;
+                        applyFilterAndPaginate();
+                    });
+                    paginationList.appendChild(pageLi);
+                }
+
+                // Tombol Berikutnya
+                const nextLi = document.createElement('li');
+                nextLi.className = `page-item ${activePage === totalPages ? 'disabled' : ''}`;
+                nextLi.innerHTML = `<a class="page-link" href="javascript:void(0)" aria-label="Next" title="Berikutnya"><i class="fas fa-chevron-right" style="font-size: 0.72rem;"></i></a>`;
+                nextLi.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        applyFilterAndPaginate();
+                    }
+                });
+                paginationList.appendChild(nextLi);
+            }
+
+            if (searchInput) searchInput.addEventListener('input', () => { currentPage = 1; applyFilterAndPaginate(); });
+            if (caborFilter) caborFilter.addEventListener('change', () => { currentPage = 1; applyFilterAndPaginate(); });
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    if (searchInput) searchInput.value = '';
+                    if (caborFilter) caborFilter.value = '';
+                    currentPage = 1;
+                    applyFilterAndPaginate();
+                });
+            }
+
+            // Inisialisasi saat modal dibuka
+            const rincianModalEl = document.getElementById('rincianMedaliModal');
+            if (rincianModalEl) {
+                rincianModalEl.addEventListener('shown.bs.modal', function() {
+                    currentPage = 1;
+                    applyFilterAndPaginate();
+                });
             }
         });
     </script>

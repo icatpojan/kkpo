@@ -64,11 +64,13 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/manajemen/hero', 'HeroSectionController@index')->name('hero.index');
         Route::put('/manajemen/hero', 'HeroSectionController@update')->name('hero.update');
+
+        // Hasil Pertandingan & Klasemen Medali
+        Route::resource('hasil-pertandingan', 'HasilPertandinganController');
     });
 
-    // Master Kegiatan & Nakes (Admin, Ketua Panitia, Kabid Kesehatan, KONI)
-    // admin_cabor tidak bisa akses. nakes dan rs juga tidak bisa akses.
-    Route::middleware('role:admin,ketua_panitia,kabid_kesehatan,koni')->group(function () {
+    // Master Kegiatan & Nakes (Admin, Ketua Panitia, Kabid Kesehatan, KONI, Nakes)
+    Route::middleware('role:admin,ketua_panitia,kabid_kesehatan,koni,nakes')->group(function () {
         // Master Kegiatan
         Route::get('/manajemen/kegiatan', 'KegiatanController@index')->name('kegiatan.index');
         Route::post('/manajemen/kegiatan', 'KegiatanController@store')->name('kegiatan.store');

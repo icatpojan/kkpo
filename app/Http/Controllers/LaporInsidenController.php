@@ -14,7 +14,7 @@ class LaporInsidenController extends Controller
 {
     public function index(Request $request)
     {
-        $kegiatans = Kegiatan::orderBy('tanggal', 'desc')->get();
+        $kegiatans = Kegiatan::orderBy('tanggal_mulai', 'desc')->get();
         
         $jadwals = [];
         if ($request->kegiatan_id) {

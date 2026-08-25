@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Schema;
 use Faker\Factory as Faker;
 use Carbon\Carbon;
 
+require_once __DIR__ . '/HasilPertandinganSeeder.php';
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -78,6 +80,7 @@ class DatabaseSeeder extends Seeder
             KkpoSebantenSeeder::class,
             NakesAbsenSeeder::class,
             UserRolesSeeder::class,
+            HasilPertandinganSeeder::class,
         ]);
 
         Schema::enableForeignKeyConstraints();

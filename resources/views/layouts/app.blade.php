@@ -579,7 +579,7 @@
             <div class="accordion accordion-flush" id="sidebarAccordion">
                 <!-- Manajemen Web -->
                 @if(auth()->user()->role === 'admin')
-                @php $isManajemen = request()->routeIs('hero.*', 'tentang.*', 'struktur.*', 'berita.*'); @endphp
+                @php $isManajemen = request()->routeIs('hero.*', 'tentang.*', 'struktur.*', 'berita.*', 'hasil-pertandingan.*'); @endphp
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingManajemen">
                         <button class="accordion-button {{ $isManajemen ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManajemen" aria-expanded="{{ $isManajemen ? 'true' : 'false' }}" aria-controls="collapseManajemen">
@@ -589,6 +589,7 @@
                     <div id="collapseManajemen" class="accordion-collapse collapse {{ $isManajemen ? 'show' : '' }}" aria-labelledby="headingManajemen" data-bs-parent="#sidebarAccordion">
                         <div class="accordion-body">
                             <a href="{{ route('hero.index') }}" class="menu-item {{ request()->routeIs('hero.*') ? 'active' : '' }}">Pengaturan Web</a>
+                            <a href="{{ route('hasil-pertandingan.index') }}" class="menu-item {{ request()->routeIs('hasil-pertandingan.*') ? 'active' : '' }}">Hasil & Medali</a>
                             <a href="{{ route('tentang.index') }}" class="menu-item {{ request()->routeIs('tentang.*') ? 'active' : '' }}">Tentang KKPO</a>
                             <a href="{{ route('struktur.index') }}" class="menu-item {{ request()->routeIs('struktur.*') ? 'active' : '' }}">Struktur</a>
                             <a href="{{ route('berita.index') }}" class="menu-item {{ request()->routeIs('berita.*') ? 'active' : '' }}">Berita</a>
